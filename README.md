@@ -10,7 +10,7 @@ To build the service image locally, there is a shell script `build.sh` that can 
 sh build.sh
 ```
 
-It will build the image with the tag `near-saver-svc:latest` which could be used to run the service locally via
+It will build the image with the tag `relayer-svc:latest` which could be used to run the service locally via
 Docker or Docker-Compose.
 
 ## License
