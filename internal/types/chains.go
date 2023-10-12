@@ -18,11 +18,9 @@ const (
 
 	Solana = "Solana"
 	Near   = "Near"
-)
 
-var Chains = []string{
-	EthereumMainnet, Goerli, Sepolia, MaticMainnet, Mumbai, BSCMainnet, Chapel, AvalancheMainnet, Fuji, Solana, Near,
-}
+	Rarimo = "Rarimo"
+)
 
 var evmChains = []string{
 	EthereumMainnet, Goerli, Sepolia, MaticMainnet, Mumbai, BSCMainnet, Chapel, AvalancheMainnet, Fuji,

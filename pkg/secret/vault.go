@@ -14,6 +14,7 @@ const (
 	solanaKey         = "solana"
 	nearKey           = "near"
 	nearPrivateKeyKey = "private_key"
+	rarimoKey         = "rarimo"
 	nearAddressKey    = "address"
 	bouncerKey        = "bouncer"
 )
@@ -58,13 +59,19 @@ func (v *vault) loadSecret() error {
 	}
 	v.log.Info("[Vault] Solana private key found")
 
+	rarimo, err := rarimoSecretsFromMap(v.kvSecret.Data[rarimoKey].(string))
+	if err != nil {
+		return errors.Wrap(err, "expected a hex-encoded rarimo private key")
+	}
+	v.log.Info("[Vault] Rarimo private key found")
+
 	bouncer, err := crypto.HexToECDSA(v.kvSecret.Data[bouncerKey].(string))
 	if err != nil {
 		return errors.Wrap(err, "expected a hex-encoded bouncer private key")
 	}
 	v.log.Info("[Vault] Bouncer private key found")
 
-	v.secret, err = newSecret(evm, near, sol, bouncer)
+	v.secret, err = newSecret(evm, near, sol, rarimo, bouncer)
 	if err != nil {
 		return errors.Wrap(err, "failed to create secret")
 	}
