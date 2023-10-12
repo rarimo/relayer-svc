@@ -4,6 +4,7 @@ import (
 	"gitlab.com/distributed_lab/figure/v3"
 	"gitlab.com/distributed_lab/kit/comfig"
 	"gitlab.com/distributed_lab/kit/kv"
+	"gitlab.com/distributed_lab/logan/v3/errors"
 )
 
 type Rarimo struct {
@@ -33,7 +34,7 @@ func (c *rarimoer) Rarimo() *Rarimo {
 		var cfg Rarimo
 
 		if err := figure.Out(&cfg).From(kv.MustGetStringMap(c.getter, "rarimo")).Please(); err != nil {
-			panic(err)
+			panic(errors.Wrap(err, "failed to load rarimo config"))
 		}
 
 		return &cfg
