@@ -30,7 +30,7 @@ func (c *relayerConsumer) processRarimoTransfer(
 	address := c.vault.Secret().Rarimo().PublicKey()
 
 	err := builder.SetMsgs(&bridgetypes.MsgWithdrawNative{
-		Creator: c.vault.Secret().Rarimo().PublicKey(),
+		Creator: address,
 		Origin:  transferDetails.Origin,
 	})
 	if err != nil {
