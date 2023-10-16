@@ -19,7 +19,7 @@ require (
 	github.com/rarimo/evm-bridge-contracts v0.0.0-20231011104217-00f444736155
 	github.com/rarimo/go-merkle v0.0.0-20231004122345-36fa49031c66
 	github.com/rarimo/horizon-svc v0.0.0-20231005112611-26a07b0e5787
-	github.com/rarimo/near-go v0.0.0-20231010092111-60a68fb20b8b
+	github.com/rarimo/near-go v0.0.0-20231016081124-c94dca3d7e22
 	github.com/rarimo/rarimo-core v1.0.6
 	github.com/rarimo/solana-program-go v1.0.0
 	github.com/spf13/cast v1.5.1
