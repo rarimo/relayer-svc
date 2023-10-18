@@ -97,6 +97,7 @@ func newConsumer(cfg config.Config, id string) *relayerConsumer {
 		rarimo:          cfg.Rarimo(),
 		horizon:         cfg.Horizon(),
 		queue:           cfg.Redis().OpenRelayQueue(),
+		vault:           cfg.Vault(),
 		bridgerProvider: bridger.NewBridgerProvider(cfg),
 		txConfig:        tx.NewTxConfig(codec.NewProtoCodec(codectypes.NewInterfaceRegistry()), []signing.SignMode{signing.SignMode_SIGN_MODE_DIRECT}),
 	}

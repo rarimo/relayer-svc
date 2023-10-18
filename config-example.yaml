@@ -59,3 +59,9 @@ horizon:
 
 scheduler:
   start_block: 2
+
+rarimo:
+  chain_id: "rarimo"
+  coin: "urmo"
+  gas_limit: 100000000
+  min_gas_price: 1

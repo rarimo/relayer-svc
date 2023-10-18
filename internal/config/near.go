@@ -26,9 +26,8 @@ func NewNearer(getter kv.Getter) Nearer {
 }
 
 type Near struct {
-	RPC              *nearclient.Client `fig:"rpc"`
-	SubmitterAddress common.AccountID   `fig:"submitter_address,required"`
-	BridgeAddress    common.AccountID   `fig:"bridge_address,required"`
+	RPC           *nearclient.Client `fig:"rpc"`
+	BridgeAddress common.AccountID   `fig:"bridge_address,required"`
 }
 
 func (n *nearer) Near() *Near {
