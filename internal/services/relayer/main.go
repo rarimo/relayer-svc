@@ -3,15 +3,6 @@ package relayer
 import (
 	"context"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdktx "github.com/cosmos/cosmos-sdk/types/tx"
-	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	"github.com/cosmos/cosmos-sdk/x/auth/tx"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/rarimo/relayer-svc/internal/data/horizon"
-	"github.com/rarimo/relayer-svc/pkg/secret"
 	"time"
 
 	"github.com/rarimo/relayer-svc/internal/services/bridger/bridge"
@@ -26,8 +17,6 @@ import (
 	"github.com/rarimo/relayer-svc/internal/config"
 	"github.com/rarimo/relayer-svc/internal/data"
 	"github.com/rarimo/relayer-svc/internal/data/core"
-	"github.com/rarimo/relayer-svc/internal/types"
-
 	"github.com/rarimo/relayer-svc/internal/services/bridger"
 )
 
@@ -48,17 +37,8 @@ type relayerConsumer struct {
 	log             *logan.Entry
 	rarimocore      rarimocore.QueryClient
 	tokenmanager    tokenmanager.QueryClient
-	auth            authtypes.QueryClient
-	tx              sdktx.ServiceClient
-	evm             *config.EVM
 	bridgerProvider bridger.BridgerProvider
-	solana          *config.Solana
-	near            *config.Near
-	horizon         horizon.Horizon
 	queue           rmq.Queue
-	vault           secret.Vault
-	txConfig        client.TxConfig
-	rarimo          *config.Rarimo
 }
 
 func Run(cfg config.Config, ctx context.Context) {
@@ -89,17 +69,8 @@ func newConsumer(cfg config.Config, id string) *relayerConsumer {
 		log:             cfg.Log().WithField("service", id),
 		rarimocore:      rarimocore.NewQueryClient(cfg.Cosmos()),
 		tokenmanager:    tokenmanager.NewQueryClient(cfg.Cosmos()),
-		auth:            authtypes.NewQueryClient(cfg.Cosmos()),
-		tx:              sdktx.NewServiceClient(cfg.Cosmos()),
-		evm:             cfg.EVM(),
-		solana:          cfg.Solana(),
-		near:            cfg.Near(),
-		rarimo:          cfg.Rarimo(),
-		horizon:         cfg.Horizon(),
 		queue:           cfg.Redis().OpenRelayQueue(),
-		vault:           cfg.Vault(),
 		bridgerProvider: bridger.NewBridgerProvider(cfg),
-		txConfig:        tx.NewTxConfig(codec.NewProtoCodec(codectypes.NewInterfaceRegistry()), []signing.SignMode{signing.SignMode_SIGN_MODE_DIRECT}),
 	}
 }
 
@@ -186,18 +157,9 @@ func (c *relayerConsumer) processTransfer(ctx context.Context, task data.RelayTa
 		"to_chain":   transfer.To.Chain,
 	}
 
-	log.
-		WithFields(f).
-		Info("relaying a transfer")
+	log.WithFields(f).Info("relaying a transfer")
 
-	switch {
-	case transfer.To.Chain == types.Near:
-		return c.processNearTransfer(task, transferDetails)
-	case transfer.To.Chain == types.Rarimo:
-		return c.processRarimoTransfer(ctx, task, transferDetails)
-	default:
-		return c.bridgerProvider.GetBridger(transfer.To.Chain).Withdraw(ctx, transferDetails)
-	}
+	return c.bridgerProvider.GetBridger(transfer.To.Chain).Withdraw(ctx, transferDetails)
 }
 
 func mustReject(delivery rmq.Delivery) {
