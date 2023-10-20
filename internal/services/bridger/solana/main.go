@@ -154,7 +154,7 @@ func (b *solanaBridger) makeWitdrawTx(
 	return tx, nil
 }
 
-func (b solanaBridger) isAlreadyWithdrawn(ctx context.Context, transfer core.TransferDetails) (bool, error) {
+func (b *solanaBridger) isAlreadyWithdrawn(ctx context.Context, transfer core.TransferDetails) (bool, error) {
 	origin := utils.ToByte32(hexutil.MustDecode(transfer.Origin))
 	withdrawAddress, _, err := solana.FindProgramAddress([][]byte{origin[:]}, b.solana.BridgeProgramID)
 	if err != nil {

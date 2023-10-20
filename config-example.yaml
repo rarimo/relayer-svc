@@ -32,12 +32,12 @@ vault:
 evm:
   chains:
     - name: "Goerli"
-      bridge_address: "0xcbc1Bd5Bc898f04BDd215F7EEBbf2fdf785D12bE"
-      bridge_facade_address: "0x5fB46b6453db7489AE32C62ab3bFdFb6bA20253D"
+      bridge_address: "0x95b8A46995AdD59DeE646cF116b10DDFFf711F49"
+      bridge_facade_address: "0x352b597247bD1dbD36e6Cf54F6658b8699c86cE8"
       rpc: "https://goerli.infura.io/v3/..."
     - name: "Fuji"
-      bridge_address: "0xd3C2c1BA9c596D3F6890cb9C3DF3C7e4113d264c"
-      bridge_facade_address: "0xE4d44744e2Ad34Fdc2be741961B9233eb656A407"
+      bridge_address: "0x73Fc46B49C02b128ad612c830C0ad379365b07A8"
+      bridge_facade_address: "0xD8bd387aA83e2eDcdB0b6a5dd4F87a96db081C2f"
       rpc: "https://avalanche-fuji.infura.io/v3/..."
 
 solana:
