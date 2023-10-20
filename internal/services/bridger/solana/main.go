@@ -31,6 +31,7 @@ func NewSolanaBridger(cfg config.Config) bridge.Bridger {
 		log:          cfg.Log().WithField("service", "solana_bridger"),
 		tokenmanager: tokenmanager.NewQueryClient(cfg.Cosmos()),
 		solana:       cfg.Solana(),
+		vault:        cfg.Vault(),
 	}
 }
 
