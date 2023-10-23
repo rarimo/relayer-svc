@@ -48,7 +48,7 @@ func (b *solanaBridger) Withdraw(
 		return bridge.ErrAlreadyWithdrawn
 	}
 
-	tx, err := b.makeWitdrawTx(ctx, transfer)
+	tx, err := b.makeWithdrawTx(ctx, transfer)
 	if err != nil {
 		return errors.Wrap(err, "failed to call the withdraw method")
 	}
@@ -67,24 +67,24 @@ func (b *solanaBridger) Withdraw(
 	return nil
 }
 
-func (b *solanaBridger) makeWitdrawTx(
+func (b *solanaBridger) makeWithdrawTx(
 	ctx context.Context,
-	transferDetails core.TransferDetails,
+	transfer core.TransferDetails,
 ) (*solana.Transaction, error) {
-	receiver := hexutil.MustDecode(transferDetails.Transfer.Receiver)
-	origin := utils.ToByte32(hexutil.MustDecode(transferDetails.Origin))
-	signature := hexutil.MustDecode(transferDetails.Signature)
-	amount, err := utils.GetAmountOrDefault(transferDetails.Transfer.Amount, big.NewInt(1))
+	receiver := hexutil.MustDecode(transfer.Transfer.Receiver)
+	origin := utils.ToByte32(hexutil.MustDecode(transfer.Origin))
+	signature := hexutil.MustDecode(transfer.Signature)
+	amount, err := utils.GetAmountOrDefault(transfer.Transfer.Amount, big.NewInt(1))
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("invalid amount: %s", transferDetails.Transfer.Amount))
+		return nil, errors.Wrap(err, fmt.Sprintf("invalid amount: %s", transfer.Transfer.Amount))
 	}
 
 	args := solanabridge.WithdrawArgs{
+		Origin:     origin,
 		Amount:     amount.Uint64(),
-		Path:       transferDetails.MerklePath,
+		Path:       transfer.MerklePath,
 		RecoveryId: signature[64],
 		Seeds:      b.solana.BridgeAdminSeed,
-		Origin:     origin,
 		Signature:  utils.ToByte64(signature),
 	}
 
@@ -94,7 +94,7 @@ func (b *solanaBridger) makeWitdrawTx(
 	}
 
 	var instruction solana.Instruction
-	switch transferDetails.CollectionData.TokenType {
+	switch transfer.CollectionData.TokenType {
 	case tokenmanager.Type_NATIVE:
 		instruction, err = solanabridge.WithdrawNativeInstruction(
 			b.solana.BridgeProgramID,
@@ -104,7 +104,7 @@ func (b *solanaBridger) makeWitdrawTx(
 			args,
 		)
 	case tokenmanager.Type_METAPLEX_FT:
-		tokenAddress := hexutil.MustDecode(transferDetails.Transfer.To.Address)
+		tokenAddress := hexutil.MustDecode(transfer.Transfer.To.Address)
 		instruction, err = solanabridge.WithdrawFTInstruction(
 			b.solana.BridgeProgramID,
 			b.solana.BridgeAdmin,
@@ -114,7 +114,7 @@ func (b *solanaBridger) makeWitdrawTx(
 			args,
 		)
 	case tokenmanager.Type_METAPLEX_NFT:
-		tokenID := hexutil.MustDecode(transferDetails.Transfer.To.TokenID)
+		tokenID := hexutil.MustDecode(transfer.Transfer.To.TokenID)
 		instruction, err = solanabridge.WithdrawNFTInstruction(
 			b.solana.BridgeProgramID,
 			b.solana.BridgeAdmin,
@@ -124,10 +124,23 @@ func (b *solanaBridger) makeWitdrawTx(
 			args,
 		)
 	default:
-		return nil, errors.Errorf("invalid solana token type: %d", transferDetails.CollectionData.TokenType)
+		return nil, errors.Errorf("invalid solana token type: %d", transfer.CollectionData.TokenType)
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to construct the solana instruction")
+	}
+
+	if transfer.CollectionData.TokenType != tokenmanager.Type_NATIVE && transfer.Item.Meta.Seed != "" {
+		var s [32]byte
+		copy(s[:], hexutil.MustDecode(transfer.Item.Meta.Seed))
+		args.TokenSeed = &s
+
+		args.SignedMetadata = &solanabridge.SignedMetadata{
+			Name:     transfer.Collection.Meta.Name,
+			Symbol:   transfer.Collection.Meta.Symbol,
+			URI:      transfer.Item.Meta.Uri,
+			Decimals: uint8(transfer.CollectionData.Decimals),
+		}
 	}
 
 	recent, err := b.solana.RPC.GetLatestBlockhash(
