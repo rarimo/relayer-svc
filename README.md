@@ -13,5 +13,9 @@ sh build.sh
 It will build the image with the tag `relayer-svc:latest` which could be used to run the service locally via
 Docker or Docker-Compose.
 
+## Changelog
+
+For the change log, see [CHANGELOG.md](./CHANGELOG.md).
+
 ## License
 [MIT](./LICENSE)
