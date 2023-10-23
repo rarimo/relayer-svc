@@ -93,6 +93,19 @@ func (b *solanaBridger) makeWithdrawTx(
 		return nil, errors.New("failed to create withdraw address")
 	}
 
+	if transfer.CollectionData.TokenType != tokenmanager.Type_NATIVE && transfer.Item.Meta.Seed != "" {
+		var s [32]byte
+		copy(s[:], hexutil.MustDecode(transfer.Item.Meta.Seed))
+		args.TokenSeed = &s
+
+		args.SignedMetadata = &solanabridge.SignedMetadata{
+			Name:     transfer.Collection.Meta.Name,
+			Symbol:   transfer.Collection.Meta.Symbol,
+			URI:      transfer.Item.Meta.Uri,
+			Decimals: uint8(transfer.CollectionData.Decimals),
+		}
+	}
+
 	var instruction solana.Instruction
 	switch transfer.CollectionData.TokenType {
 	case tokenmanager.Type_NATIVE:
@@ -128,19 +141,6 @@ func (b *solanaBridger) makeWithdrawTx(
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to construct the solana instruction")
-	}
-
-	if transfer.CollectionData.TokenType != tokenmanager.Type_NATIVE && transfer.Item.Meta.Seed != "" {
-		var s [32]byte
-		copy(s[:], hexutil.MustDecode(transfer.Item.Meta.Seed))
-		args.TokenSeed = &s
-
-		args.SignedMetadata = &solanabridge.SignedMetadata{
-			Name:     transfer.Collection.Meta.Name,
-			Symbol:   transfer.Collection.Meta.Symbol,
-			URI:      transfer.Item.Meta.Uri,
-			Decimals: uint8(transfer.CollectionData.Decimals),
-		}
 	}
 
 	recent, err := b.solana.RPC.GetLatestBlockhash(
