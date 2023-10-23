@@ -43,8 +43,8 @@ evm:
 solana:
   rpc: "https://api.devnet.solana.com"
   ws: "wss://api.devnet.solana.com"
-  bridge_program_id: "GexDbBi7B2UrJDi9JkrWH9fFVhmysN7u5C9zT2HkC6yZ"
-  bridge_admin_seed: "BhBxfhsg2CrckxRKqHJXykLVTSD5LLF8nqNyzXD9idY"
+  bridge_program_id: "DVUGEV7Qe8MLJSSHsjRH6rzMnA1a5DhVP7D8Z2ctwPgb"
+  bridge_admin_seed: "AkMc5ssu4Yv5nAxiYN5GdvGpesJbFShX5GdFNgTN73UK"
 
 near:
   rpc: "https://rpc.testnet.near.org"
