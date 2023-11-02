@@ -2,6 +2,8 @@ package bridger
 
 import (
 	"fmt"
+	"github.com/rarimo/relayer-svc/internal/services/bridger/near"
+	"github.com/rarimo/relayer-svc/internal/services/bridger/rarimo"
 	"sync"
 
 	"github.com/rarimo/relayer-svc/internal/config"
@@ -43,6 +45,10 @@ func (p *bridgerProvider) GetBridger(chain string) bridge.Bridger {
 		bridger = evm.NewEVMBridger(p.cfg)
 	case chain == types.Solana:
 		bridger = solana.NewSolanaBridger(p.cfg)
+	case chain == types.Near:
+		bridger = near.NewNearBridger(p.cfg)
+	case chain == types.Rarimo:
+		bridger = rarimo.NewRarimoBridger(p.cfg)
 	default:
 		panic(fmt.Errorf("unknown chain %s", chain))
 	}

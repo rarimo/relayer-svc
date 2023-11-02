@@ -32,19 +32,19 @@ vault:
 evm:
   chains:
     - name: "Goerli"
-      bridge_address: "0xcbc1Bd5Bc898f04BDd215F7EEBbf2fdf785D12bE"
-      bridge_facade_address: "0x5fB46b6453db7489AE32C62ab3bFdFb6bA20253D"
+      bridge_address: "0x95b8A46995AdD59DeE646cF116b10DDFFf711F49"
+      bridge_facade_address: "0x352b597247bD1dbD36e6Cf54F6658b8699c86cE8"
       rpc: "https://goerli.infura.io/v3/..."
     - name: "Fuji"
-      bridge_address: "0xd3C2c1BA9c596D3F6890cb9C3DF3C7e4113d264c"
-      bridge_facade_address: "0xE4d44744e2Ad34Fdc2be741961B9233eb656A407"
+      bridge_address: "0x73Fc46B49C02b128ad612c830C0ad379365b07A8"
+      bridge_facade_address: "0xD8bd387aA83e2eDcdB0b6a5dd4F87a96db081C2f"
       rpc: "https://avalanche-fuji.infura.io/v3/..."
 
 solana:
   rpc: "https://api.devnet.solana.com"
   ws: "wss://api.devnet.solana.com"
-  bridge_program_id: "GexDbBi7B2UrJDi9JkrWH9fFVhmysN7u5C9zT2HkC6yZ"
-  bridge_admin_seed: "BhBxfhsg2CrckxRKqHJXykLVTSD5LLF8nqNyzXD9idY"
+  bridge_program_id: "DVUGEV7Qe8MLJSSHsjRH6rzMnA1a5DhVP7D8Z2ctwPgb"
+  bridge_admin_seed: "AkMc5ssu4Yv5nAxiYN5GdvGpesJbFShX5GdFNgTN73UK"
 
 near:
   rpc: "https://rpc.testnet.near.org"
@@ -59,3 +59,9 @@ horizon:
 
 scheduler:
   start_block: 2
+
+rarimo:
+  chain_id: "rarimo"
+  coin: "urmo"
+  gas_limit: 100000000
+  min_gas_price: 1

@@ -33,6 +33,7 @@ func NewEVMBridger(cfg config.Config) bridge.Bridger {
 		log:          cfg.Log().WithField("service", "evm_bridge"),
 		tokenmanager: tokenmanager.NewQueryClient(cfg.Cosmos()),
 		evm:          cfg.EVM(),
+		vault:        cfg.Vault(),
 	}
 }
 

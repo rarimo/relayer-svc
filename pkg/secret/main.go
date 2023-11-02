@@ -16,10 +16,11 @@ type Secret struct {
 	evm     *EVMSecrets
 	near    *NearSecrets
 	solana  *SolanaSecrets
+	rarimo  *RarimoSecrets
 	bouncer *ecdsa.PrivateKey
 }
 
-func newSecret(evm *EVMSecrets, near *NearSecrets, solana solana.PrivateKey, bouncer *ecdsa.PrivateKey) (*Secret, error) {
+func newSecret(evm *EVMSecrets, near *NearSecrets, solana solana.PrivateKey, rarimo *RarimoSecrets, bouncer *ecdsa.PrivateKey) (*Secret, error) {
 	if evm == nil {
 		return nil, errors.Wrap(EvmSecretsNotInitialized, "evm secrets are empty")
 	}
@@ -38,6 +39,7 @@ func newSecret(evm *EVMSecrets, near *NearSecrets, solana solana.PrivateKey, bou
 		evm,
 		near,
 		NewSolanaSecrets(solana),
+		rarimo,
 		bouncer,
 	}, nil
 }
@@ -52,6 +54,10 @@ func (s *Secret) Near() *NearSecrets {
 
 func (s *Secret) Solana() *SolanaSecrets {
 	return s.solana
+}
+
+func (s *Secret) Rarimo() *RarimoSecrets {
+	return s.rarimo
 }
 
 func (s *Secret) Bouncer() *ecdsa.PrivateKey {

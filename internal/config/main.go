@@ -25,6 +25,7 @@ type Config interface {
 	Solaner
 	Nearer
 	Schedulerer
+	Rarimoer
 }
 
 type config struct {
@@ -42,6 +43,7 @@ type config struct {
 	Solaner
 	Nearer
 	Schedulerer
+	Rarimoer
 }
 
 func New(getter kv.Getter) Config {
@@ -61,5 +63,6 @@ func New(getter kv.Getter) Config {
 		Nearer:       NewNearer(getter),
 		Schedulerer:  NewSchedulerer(getter),
 		Vaulter:      secret.NewVaulter(getter, logger.Log()),
+		Rarimoer:     NewRarimoer(getter),
 	}
 }

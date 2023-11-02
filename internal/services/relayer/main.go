@@ -3,8 +3,6 @@ package relayer
 import (
 	"context"
 	"fmt"
-	"github.com/rarimo/relayer-svc/internal/data/horizon"
-	"github.com/rarimo/relayer-svc/pkg/secret"
 	"time"
 
 	"github.com/rarimo/relayer-svc/internal/services/bridger/bridge"
@@ -19,8 +17,6 @@ import (
 	"github.com/rarimo/relayer-svc/internal/config"
 	"github.com/rarimo/relayer-svc/internal/data"
 	"github.com/rarimo/relayer-svc/internal/data/core"
-	"github.com/rarimo/relayer-svc/internal/types"
-
 	"github.com/rarimo/relayer-svc/internal/services/bridger"
 )
 
@@ -41,13 +37,8 @@ type relayerConsumer struct {
 	log             *logan.Entry
 	rarimocore      rarimocore.QueryClient
 	tokenmanager    tokenmanager.QueryClient
-	evm             *config.EVM
 	bridgerProvider bridger.BridgerProvider
-	solana          *config.Solana
-	near            *config.Near
-	horizon         horizon.Horizon
 	queue           rmq.Queue
-	vault           secret.Vault
 }
 
 func Run(cfg config.Config, ctx context.Context) {
@@ -78,10 +69,6 @@ func newConsumer(cfg config.Config, id string) *relayerConsumer {
 		log:             cfg.Log().WithField("service", id),
 		rarimocore:      rarimocore.NewQueryClient(cfg.Cosmos()),
 		tokenmanager:    tokenmanager.NewQueryClient(cfg.Cosmos()),
-		evm:             cfg.EVM(),
-		solana:          cfg.Solana(),
-		near:            cfg.Near(),
-		horizon:         cfg.Horizon(),
 		queue:           cfg.Redis().OpenRelayQueue(),
 		bridgerProvider: bridger.NewBridgerProvider(cfg),
 	}
@@ -170,16 +157,9 @@ func (c *relayerConsumer) processTransfer(ctx context.Context, task data.RelayTa
 		"to_chain":   transfer.To.Chain,
 	}
 
-	log.
-		WithFields(f).
-		Info("relaying a transfer")
+	log.WithFields(f).Info("relaying a transfer")
 
-	switch {
-	case transfer.To.Chain == types.Near:
-		return c.processNearTransfer(task, transferDetails)
-	default:
-		return c.bridgerProvider.GetBridger(transfer.To.Chain).Withdraw(ctx, transferDetails)
-	}
+	return c.bridgerProvider.GetBridger(transfer.To.Chain).Withdraw(ctx, transferDetails)
 }
 
 func mustReject(delivery rmq.Delivery) {
