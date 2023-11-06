@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rarimo withdraw processor
 - Rarimo vault secrets functionality
 
+### Fixed
+- Horizon endpoint for the NFT metadata
+
 ### Changed
 - EVM config contract addresses in the example to the actual one
 - bump `near-go` version
