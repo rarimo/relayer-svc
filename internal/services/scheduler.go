@@ -155,7 +155,7 @@ func (s *scheduler) getCursor(ctx context.Context) (uint64, error) {
 
 	cursor, err := resp.Uint64()
 	if err != nil {
-		return 0, (err, "failed to parse the cursor value", logan.F{
+		return 0, errors.Wrap(err, "failed to parse the cursor value", logan.F{
 			"raw": resp.String(),
 		})
 	}
@@ -206,7 +206,7 @@ func (s *scheduler) ScheduleRelays(
 		return errors.Wrap(err, "failed to get transfers")
 	}
 
-	tasks := []data.RelayTask{}
+	var tasks []data.RelayTask
 	for _, transfer := range transfers {
 		if !slices.Contains(transferIndexes, transfer.Transfer.Origin) {
 			continue
