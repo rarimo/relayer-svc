@@ -155,7 +155,7 @@ func (s *scheduler) getCursor(ctx context.Context) (uint64, error) {
 
 	cursor, err := resp.Uint64()
 	if err != nil {
-		return 0, (err, "failed to parse the cursor value", logan.F{
+		return 0, errors.Wrap(err, "failed to parse the cursor value", logan.F{
 			"raw": resp.String(),
 		})
 	}
