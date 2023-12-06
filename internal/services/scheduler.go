@@ -221,6 +221,11 @@ func (s *scheduler) ScheduleRelays(
 		}
 	}
 
+	if len(rawTasks) == 0 {
+		log.Info("no transfers to relay")
+		return nil
+	}
+
 	if err := s.relayQueue.PublishBytes(rawTasks...); err != nil {
 		return errors.Wrap(err, "failed to publish tasks")
 	}
