@@ -52,16 +52,23 @@ func (c *core) GetTransfers(ctx context.Context, confirmationID string) ([]Trans
 	}
 
 	transfers := make([]TransferDetails, 0, len(confirmation.Indexes))
-	operations := []*operation.TransferContent{}
-	contents := []merkle.Content{}
+	var operations []*operation.TransferContent
+	var contents []merkle.Content
 
 	for _, id := range confirmation.Indexes {
-		operation, err := c.core.Operation(ctx, &rarimocore.QueryGetOperationRequest{Index: id})
+		op, err := c.core.Operation(ctx, &rarimocore.QueryGetOperationRequest{Index: id})
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to fetch the operation")
+			return nil, errors.Wrap(err, "failed to fetch the operation", logan.F{
+				"index": id,
+			})
 		}
+
+		if op.Operation.OperationType != rarimocore.OpType_TRANSFER {
+			continue
+		}
+
 		transfer := rarimocore.Transfer{}
-		if err := transfer.Unmarshal(operation.Operation.Details.Value); err != nil {
+		if err := transfer.Unmarshal(op.Operation.Details.Value); err != nil {
 			return nil, errors.Wrap(err, "failed to unmarshal the transfer")
 		}
 
@@ -71,14 +78,20 @@ func (c *core) GetTransfers(ctx context.Context, confirmationID string) ([]Trans
 			Chain:   transfer.To.Chain,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get token details")
+			return nil, errors.Wrap(err, "failed to get token details", logan.F{
+				"address": transfer.To.Address,
+				"tokenID": transfer.To.TokenID,
+				"chain":   transfer.To.Chain,
+			})
 		}
 
 		collection, err := c.tm.Collection(ctx, &tokenmanager.QueryGetCollectionRequest{
 			Index: tokenDetails.Item.Collection,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get collection")
+			return nil, errors.Wrap(err, "failed to get collection", logan.F{
+				"index": tokenDetails.Item.Collection,
+			})
 		}
 
 		collectionData, err := c.tm.CollectionDataByCollectionForChain(ctx, &tokenmanager.QueryGetCollectionDataByCollectionForChainRequest{
@@ -86,7 +99,10 @@ func (c *core) GetTransfers(ctx context.Context, confirmationID string) ([]Trans
 			CollectionIndex: collection.Collection.Index,
 		})
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get collection data")
+			return nil, errors.Wrap(err, "failed to get collection data by collection for chain", logan.F{
+				"chain":           transfer.To.Chain,
+				"collectionIndex": collection.Collection.Index,
+			})
 		}
 
 		var bridgeParams *tokenmanager.BridgeNetworkParams
