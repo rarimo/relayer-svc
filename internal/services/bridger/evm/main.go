@@ -262,6 +262,7 @@ func (b *evmBridger) isAlreadyWithdrawn(
 	return withdrawn, nil
 }
 
+// ONE - One GWEI
 var ONE = 1000000000
 
 func multiplyGasPrice(gasPrice *big.Int, multiplier float64) *big.Int {
