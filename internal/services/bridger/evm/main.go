@@ -21,6 +21,8 @@ import (
 	"math/big"
 )
 
+const GAS_PRICE_MULTIPLIER = 1.3
+
 type evmBridger struct {
 	log          *logan.Entry
 	tokenmanager tokenmanager.QueryClient
@@ -86,7 +88,7 @@ func (b *evmBridger) makeWithdrawTx(
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get suggested gas price")
 	}
-	opts.GasPrice = gasPrice
+	opts.GasPrice = multiplyGasPrice(gasPrice, GAS_PRICE_MULTIPLIER)
 	opts.GasLimit = uint64(1000000) // TODO: estimate or make it configurable
 
 	switch transfer.CollectionData.TokenType {
@@ -258,4 +260,13 @@ func (b *evmBridger) isAlreadyWithdrawn(
 	}
 
 	return withdrawn, nil
+}
+
+// ONE - One GWEI
+var ONE = 1000000000
+
+func multiplyGasPrice(gasPrice *big.Int, multiplier float64) *big.Int {
+	mult := big.NewFloat(0).Mul(big.NewFloat(multiplier), big.NewFloat(float64(ONE)))
+	gas, _ := big.NewFloat(0).Mul(big.NewFloat(0).SetInt(gasPrice), mult).Int(nil)
+	return big.NewInt(0).Div(gas, big.NewInt(int64(ONE)))
 }
