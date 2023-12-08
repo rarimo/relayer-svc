@@ -21,7 +21,7 @@ import (
 	"math/big"
 )
 
-const GAS_PRICE_MULTIPLIER = 1.1
+const GAS_PRICE_MULTIPLIER = 1.3
 
 type evmBridger struct {
 	log          *logan.Entry
