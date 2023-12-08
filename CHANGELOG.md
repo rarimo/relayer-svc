@@ -10,9 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rarimo module configuration
 - Rarimo withdraw processor
 - Rarimo vault secrets functionality
+- Gas price multiplier for the EVM bridger
 
 ### Fixed
 - Horizon endpoint for the NFT metadata
+- Build merkle path for withdraws
 
 ### Changed
 - EVM config contract addresses in the example to the actual one
